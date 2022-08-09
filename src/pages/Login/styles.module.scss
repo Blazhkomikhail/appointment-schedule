@@ -1,0 +1,44 @@
+.login { 
+  display: flex;
+  height: 100vh;
+  position: relative;
+
+  &__playground_side,
+  &__form_side {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__playground_side {
+    background-color: #F5F6F7;
+  }
+
+  &__form_side {
+    padding-left: 115px;
+    align-items: flex-start;
+  }
+
+  &__playground_title {
+    margin-bottom: 47px;
+    font-family: 'Montserrat';
+    font-weight: 900;
+    font-size: 40px;
+    line-height: 32px;
+    text-align: center;
+    text-transform: uppercase;
+    color: #003367;
+  }
+
+  &__playground_image {
+    max-width: 100%;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+  }
+
+}
