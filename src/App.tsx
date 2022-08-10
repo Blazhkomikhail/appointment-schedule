@@ -33,7 +33,9 @@ function App() {
         <Provider store={store}>
           <Routes>
             <Route path="/login" element={<Login />} />
-            <Route path="/coming-soon" element={<ComingSoon />} />
+            <Route path="/dashboard" element={<PrivateRoute />}>
+              <Route path="/dashboard" element={<ComingSoon />} />
+            </Route>
             <Route path="/my-profile" element={<PrivateRoute />}>
               <Route path="/my-profile" element={<Profile />} />
             </Route>

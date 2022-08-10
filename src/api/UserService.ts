@@ -6,7 +6,11 @@ export default class UserService {
     return $api.get('/UserCrmProfiles/GetAllDynamic');
   }
 
-  static async patchUserData(userId: string, body: {}): Promise<AxiosResponse<any>> {
-    return $api.get(`/UserCrmProfiles/Patch/${userId}`, body);
+  static async patchUserData(userId: string, pathName: string, value: {from: string | boolean, to: string | boolean}): Promise<AxiosResponse<any>> {
+    return $api.patch(`/UserCrmProfiles/Patch/${userId}`, [{
+      "path": pathName,
+      "from": value.from,
+      "value": value.to
+    }]);
   }
 }

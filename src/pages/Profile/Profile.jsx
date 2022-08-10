@@ -6,21 +6,36 @@ import { Typography, Box, TextField, Checkbox, FormGroup, FormControlLabel, Inpu
 import { ReactComponent as SlackIcon } from '../../assets/slack-icon.svg';
 import { ReactComponent as GithubIcon } from '../../assets/github-icon.svg';
 import UserService from "../../api/UserService";
+import Workflow from "./Workflow/"
 
 const Profile = () => {
   const {userData} = useSelector(store => store);
   const dispatch = useDispatch();
   const [profileData, setProfileData] = useState({});
-  
+  const [isMember, setIsMember] = useState(false);
+ 
   useEffect(() => {
     dispatch({type: "PROFILE_PAGE_LOAD"})
   }, [dispatch]);
   
   useEffect(() => {
     if (Object.keys(userData).length) {
-      setProfileData(userData)
+      setProfileData(userData);
+      setIsMember(userData.isCoreTeamMember);
     }
-  }, [userData])
+  }, [userData]);
+
+  useEffect(() => {
+    if (!profileData.appIdentityUserID) return;
+
+    UserService.patchUserData(
+      profileData.appIdentityUserID, 
+      "isCoreTeamMember", 
+      {
+        from: !isMember,
+        to: isMember,
+      });
+  }, [isMember, profileData.appIdentityUserID])
 
   const onFieldChange = (e) => {
     const {name, value} = e.target;
@@ -30,9 +45,16 @@ const Profile = () => {
     }))
   }
 
+
   const onFieldBlur = (e) => {
     const {name, value} = e.target;
-    UserService.patchUserData(profileData.id, profileData);
+    UserService.patchUserData(
+      profileData.appIdentityUserID, 
+      name, 
+      {
+        from: userData.name,
+        to: value,
+      });
   }
 
   const prepairDate = (date) => {
@@ -49,6 +71,7 @@ const Profile = () => {
         </Typography>
 
         <Box component="div" sx={{
+          marginBottom: "20px",
           padding: "16px 19px 24px 20px",
           display: "flex",
           justifyContent: "space-between",
@@ -88,6 +111,7 @@ const Profile = () => {
                   name="lastName"
                   onChange={(e) => onFieldChange(e)}
                   sx={{ width: 223 }}
+                  onBlur={(e) => onFieldBlur(e)}
                 />
                  <TextField
                     id="datetime-local"
@@ -101,7 +125,7 @@ const Profile = () => {
                     InputLabelProps={{
                       shrink: true,
                     }}
-                    onBlur={() => console.log("blur")}
+                    onBlur={(e) => onFieldBlur(e)}
                   />
               </FormGroup>
               <FormGroup 
@@ -120,6 +144,7 @@ const Profile = () => {
                   sx={{ width: 315 }}
                   name="email"
                   onChange={(e) => onFieldChange(e)}
+                  onBlur={(e) => onFieldBlur(e)}
                 />
                 <TextField
                   value={profileData.personalEmail || ""}
@@ -129,6 +154,7 @@ const Profile = () => {
                   sx={{ width: 315 }}
                   name="personalEmail"
                   onChange={(e) => onFieldChange(e)}
+                  onBlur={(e) => onFieldBlur(e)}
                 />
                 <TextField
                   value={profileData.mobilePhone || ""}
@@ -138,6 +164,7 @@ const Profile = () => {
                   sx={{ width: 315 }}
                   name="mobilePhone"
                   onChange={(e) => onFieldChange(e)}
+                  onBlur={(e) => onFieldBlur(e)}
                 />
               </FormGroup>
               <FormGroup 
@@ -161,6 +188,7 @@ const Profile = () => {
                     shrink: true,
                   }}
                   onChange={(e) => onFieldChange(e)}
+                  onBlur={(e) => onFieldBlur(e)}
                 />
                 <TextField
                   value={profileData.absences || ""}
@@ -170,9 +198,17 @@ const Profile = () => {
                   name="absences"
                   sx={{ width: 223 }}
                   onChange={(e) => onFieldChange(e)}
+                  onBlur={(e) => onFieldBlur(e)}
                 />
 
-                <FormControlLabel control={<Checkbox defaultChecked />} label="Core team member" />
+                <FormControlLabel control={
+                  <Checkbox 
+                    checked={isMember}
+                    onChange={() => setIsMember((prevState) => !prevState)}
+                  />
+                  } 
+                  label="Core team member" 
+                />
               </FormGroup>
             </div>
           </Box>
@@ -212,8 +248,9 @@ const Profile = () => {
               />
             </FormGroup>
           </Box>
-
+        
         </Box>
+        <Workflow />
       </div>
     </div>
   );

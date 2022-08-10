@@ -80,7 +80,7 @@ const Login = () => {
           if (resp.status === 200) {
             localStorage.setItem("token", resp.data.jwt.token);
             localStorage.setItem("refreshToken", resp.data.jwt.refreshToken);
-            navigate("/coming-soon");
+            navigate("/dashboard");
           }
         })
         .catch((err) => setAlertText(err.response.data));

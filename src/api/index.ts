@@ -6,7 +6,6 @@ export const API_URL = 'https://azapp-playground-demo-api.azurewebsites.net/api'
 
 const $api = axios.create({
   baseURL: API_URL,
-  headers: {"accept": "application/json"},
 });
 
 $api.interceptors.request.use((config: AxiosRequestConfig) => {

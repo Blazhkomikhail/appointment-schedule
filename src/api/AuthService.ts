@@ -18,5 +18,4 @@ export default class AuthService {
   static async refreshToken(token: string | null, refreshToken: string | null): Promise<AxiosResponse<any>> {
     return $api.post<LoginResponse>('/Accounts/RefreshToken', {token, refreshToken});
   } 
-
 }
