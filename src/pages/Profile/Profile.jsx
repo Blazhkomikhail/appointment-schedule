@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import {useSelector, useDispatch} from "react-redux";
 import SideMenu from "../../components/SideMenu";
-import styles from "./styles.module.scss";
 import { Typography, Box, TextField, Checkbox, FormGroup, FormControlLabel, InputAdornment } from '@mui/material';
 import { ReactComponent as SlackIcon } from '../../assets/slack-icon.svg';
 import { ReactComponent as GithubIcon } from '../../assets/github-icon.svg';
 import UserService from "../../api/UserService";
 import Workflow from "./Workflow/"
+import styles from "./styles.module.scss";
 
 const Profile = () => {
   const {userData} = useSelector(store => store);

@@ -1,9 +1,9 @@
-export interface WorkflowItem {
-  "userCrmProfileID": string,
-  "dayOfWeek": 4,
+export interface IWorkflowItem {
+  "userCrmProfileID"?: string,
+  "dayOfWeek": number,
   "fromTime": string,
   "toTime": string,
-  "userCrmProfile": string | null,
-  "id": string | null,
-  "isActive": boolean
+  "userCrmProfile"?: string | null,
+  "id": string,
+  "isActive"?: boolean
 }

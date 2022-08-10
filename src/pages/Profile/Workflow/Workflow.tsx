@@ -1,18 +1,22 @@
-import * as React from "react";
+import { useSelector } from "react-redux";
 import {
   Typography,
   Box,
-  TextField,
-  Checkbox,
-  FormGroup,
-  FormControlLabel,
-  InputAdornment,
+  // TextField,
+  // Checkbox,
+  // FormGroup,
+  // FormControlLabel,
+  // InputAdornment,
 } from "@mui/material";
+import { IWorkflowItem } from "../../../models/responce/WorklogResponce";
+import WorklogCard from "./components/TimeRangePicker/WorklogCard";
+import Day from "./components/Day/Day";
+import days from "./helpers/days";
 
 const Workflow = () => {
-  // useEffect(() => {
-
-  // },[])
+  const { workLogData } = useSelector(
+    (store: { userData: {}; workLogData: IWorkflowItem[] }) => store
+  );
 
   return (
     <Box
@@ -35,7 +39,13 @@ const Workflow = () => {
         Work logs
       </Typography>
 
-      <div></div>
+      <div
+        style={{ display: "flex", justifyContent: "space-between", gap: 20 }}
+      >
+        {days.map(({ name, dayOfWeek }) => (
+          <Day key={name} dayName={name} dayNumber={dayOfWeek} />
+        ))}
+      </div>
     </Box>
   );
 };

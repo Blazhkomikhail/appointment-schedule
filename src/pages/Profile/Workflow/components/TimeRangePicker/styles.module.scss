@@ -1,0 +1,40 @@
+.worklog_card {
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  height: 56px;
+  width: 223px;
+  border-bottom: 1px solid #c9c9c9;
+}
+
+
+.clock_wrapper {
+  width: 50px;
+  background-image: url("../../../../../assets/clock-icon.svg");
+  background-repeat: no-repeat;
+  background-position: right center;
+}
+
+.clear_button {
+  width: 10px;
+  height: 10px;
+  border: none;
+  background-color: #fff;
+  background-image: url("../../../../../assets/close.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.time_input {
+  width: 20px; 
+  border: none;
+
+  &:focus {
+    outline: none;
+  }
+}

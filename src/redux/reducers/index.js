@@ -1,6 +1,7 @@
 
 const initial = {
-  userData: {}
+  userData: {},
+  workLogData: []
 }
 
 export default function reducer(state = initial, action) {
@@ -12,6 +13,14 @@ export default function reducer(state = initial, action) {
           ...state.userData,
           ...action.payload,
         }
+      }
+    }
+    case "SET_WORK_LOG_DATA": {
+      return {
+        ...state,
+        workLogData: [
+          ...action.payload,
+        ]
       }
     }
     default: 
