@@ -17,11 +17,14 @@ $api.interceptors.request.use((config: AxiosRequestConfig) => {
 $api.interceptors.response.use(
   (response) => response, 
 async (error) => {
+  const originalRequest = error.config;
+
   if (error.response.status === 401) {
     AuthService.refreshToken(localStorage.getItem("token"), localStorage.getItem("refreshToken"))
     .then((resp) => {
-      localStorage.setItem("token", resp.data.jwt.token );
-      localStorage.setItem("refreshToken", resp.data.jwt.refreshToken);
+      localStorage.setItem("token", resp.data.token );
+      localStorage.setItem("refreshToken", resp.data.refreshToken);
+      $api.request(originalRequest)
     })
   } 
   return Promise.reject(error);

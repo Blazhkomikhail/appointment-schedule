@@ -15,7 +15,7 @@ export default class AuthService {
     return $api.post('/Accounts/Logout');
   }
 
-  static async refreshToken(token: string | null, refreshToken: string | null): Promise<AxiosResponse<LoginResponse>> {
+  static async refreshToken(token: string | null, refreshToken: string | null): Promise<AxiosResponse<any>> {
     return $api.post<LoginResponse>('/Accounts/RefreshToken', {token, refreshToken});
   } 
 
