@@ -16,13 +16,13 @@ function getWorklogData() {
 
 function* loadUserData () {
   const data = yield call(getUserData);
-
+  console.log("user: ", data);
   yield put ({type: "SET_USER_DATA", payload: data});
 }
 
 function* loadWorkLogData () {
   const data = yield call(getWorklogData);
-
+  console.log("workLog: ", data);
   yield put ({type: "SET_WORK_LOG_DATA", payload: data});
 }
 

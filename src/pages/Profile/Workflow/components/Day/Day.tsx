@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Paper, Typography } from "@mui/material";
 import { IWorkflowItem } from "../../../../../models/responce/WorklogResponce";
-import WorklogCard from "../TimeRangePicker/WorklogCard";
+import WorklogCard from "../WorkLogCard/WorklogCard";
 import { v4 as uuid } from "uuid";
 import styles from "./styles.module.scss";
 
@@ -48,7 +48,7 @@ const Day = ({
   };
 
   return (
-    <Paper elevation={0} sx={{ width: 223 }}>
+    <Paper elevation={0} sx={{ width: 223, flexShrink: 0 }}>
       <Typography variant="subtitle2" gutterBottom component="div">
         {dayName}
       </Typography>
@@ -67,6 +67,9 @@ const Day = ({
             toTime={toTime}
             cardId={id}
             onCardRemove={onCardRemove}
+            // validateTime={validateTime}
+            // errorText={errorMessage}
+            // errorSource={errorSource}
           />
         ))}
       </div>
