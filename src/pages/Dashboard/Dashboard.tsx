@@ -7,7 +7,7 @@ import AuthService from "../../api/AuthService";
 import SideMenu from "../../components/SideMenu";
 import styles from "./styles.module.scss";
 
-const ComingSoon = () => {
+const Dashboard = () => {
   const navigate = useNavigate();
 
   const onLogoutButtonClick = () => {
@@ -63,4 +63,4 @@ const ComingSoon = () => {
   );
 };
 
-export default ComingSoon;
+export default Dashboard;

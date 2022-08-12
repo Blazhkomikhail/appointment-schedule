@@ -6,6 +6,7 @@ import { ReactComponent as SlackIcon } from '../../assets/slack-icon.svg';
 import { ReactComponent as GithubIcon } from '../../assets/github-icon.svg';
 import UserService from "../../api/UserService";
 import Workflow from "./Workflow/"
+import useComponentDidUpdate from "../../hooks/useComponentDidUpdate";
 import styles from "./styles.module.scss";
 
 const Profile = () => {
@@ -25,7 +26,7 @@ const Profile = () => {
     }
   }, [userData]);
 
-  useEffect(() => {
+  useComponentDidUpdate(() => {
     if (!profileData.appIdentityUserID) return;
 
     UserService.patchUserData(
@@ -35,7 +36,7 @@ const Profile = () => {
         from: !isMember,
         to: isMember,
       });
-  }, [isMember, profileData.appIdentityUserID])
+  }, [isMember]);
 
   const onFieldChange = (e) => {
     const {name, value} = e.target;

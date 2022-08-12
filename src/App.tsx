@@ -6,7 +6,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import Login from "./pages/Login/";
-import ComingSoon from "./pages/ComingSoon";
+import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import PrivateRoute from "./helpers/routing/PrivateRoute";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -37,7 +37,7 @@ function App() {
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/dashboard" element={<PrivateRoute />}>
-                <Route path="/dashboard" element={<ComingSoon />} />
+                <Route path="/dashboard" element={<Dashboard />} />
               </Route>
               <Route path="/my-profile" element={<PrivateRoute />}>
                 <Route path="/my-profile" element={<Profile />} />

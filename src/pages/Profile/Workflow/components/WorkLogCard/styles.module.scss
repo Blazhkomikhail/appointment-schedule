@@ -38,3 +38,32 @@
     outline: none;
   }
 }
+
+.edit_mode_button {
+  padding: 0;
+  width: 16px;
+  height: 16px;
+  border: none;
+  background-color: #fff;
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.time_inputs_container {
+  display: flex;
+  margin-right: 3px;
+}
+
+.error_tooltip {
+  width: 55px;
+  height: 50px;
+  right: -30px;
+  text-align: center;
+
+  & > .MuiTooltip-arrow {
+    transform: translate(20px, 0px);
+  }
+}

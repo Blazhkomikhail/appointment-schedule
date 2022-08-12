@@ -8,14 +8,14 @@ import {
   // FormControlLabel,
   // InputAdornment,
 } from "@mui/material";
-import { IWorkflowItem } from "../../../models/responce/WorklogResponce";
-import WorklogCard from "./components/TimeRangePicker/WorklogCard";
+import { IWorklogItem } from "../../../models/responce/WorklogResponce";
+import WorklogCard from "./components/WorkLogCard/WorklogCard";
 import Day from "./components/Day/Day";
 import days from "./helpers/days";
 
 const Workflow = () => {
   const { workLogData } = useSelector(
-    (store: { userData: {}; workLogData: IWorkflowItem[] }) => store
+    (store: { userData: {}; workLogData: IWorklogItem[] }) => store
   );
 
   return (

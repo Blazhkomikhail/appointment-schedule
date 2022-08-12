@@ -1,4 +1,4 @@
-export interface IWorkflowItem {
+export interface IWorklogItem {
   "userCrmProfileID"?: string,
   "dayOfWeek": number,
   "fromTime": string,
