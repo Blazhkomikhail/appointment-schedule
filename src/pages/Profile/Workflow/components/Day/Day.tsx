@@ -47,6 +47,20 @@ const Day = ({
     setCardsData((prevState) => prevState.filter((item) => item.id !== cardId));
   };
 
+  const setErrorCardStyles = (id: string) => {
+    setCardsData((prevState) =>
+      prevState.map((card) =>
+        card.id === id ? { ...card, hasConflictTime: true } : card
+      )
+    );
+  };
+
+  const resetError = () => {
+    setCardsData((prevState) =>
+      prevState.map((card) => ({ ...card, hasConflictTime: false }))
+    );
+  };
+
   return (
     <Paper elevation={0} sx={{ width: 223, flexShrink: 0 }}>
       <Typography variant="subtitle2" gutterBottom component="div">
@@ -60,18 +74,24 @@ const Day = ({
         }}
       />
       <div>
-        {cardsData.map(({ id, fromTime, toTime }, idx) => (
-          <WorklogCard
-            key={id || `${fromTime}_idx`}
-            fromTime={fromTime}
-            toTime={toTime}
-            cardId={id}
-            onCardRemove={onCardRemove}
-            // validateTime={validateTime}
-            // errorText={errorMessage}
-            // errorSource={errorSource}
-          />
-        ))}
+        {cardsData.map(
+          ({ id, fromTime, toTime, hasConflictTime = false }, idx) => (
+            <WorklogCard
+              key={id || `${fromTime}_idx`}
+              fromTime={fromTime}
+              toTime={toTime}
+              cardId={id}
+              onCardRemove={onCardRemove}
+              dayAppointments={cardsData}
+              setErrorCard={setErrorCardStyles}
+              isError={hasConflictTime}
+              resetError={resetError}
+              // validateTime={validateTime}
+              // errorText={errorMessage}
+              // errorSource={errorSource}
+            />
+          )
+        )}
       </div>
       <button className={styles.add_card_btn} onClick={onAddCardButtonClick} />
     </Paper>

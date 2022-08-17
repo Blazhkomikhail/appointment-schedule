@@ -10,6 +10,7 @@ interface ICheckersReturnData {
     end: boolean;
   };
   errorText: string;
+  conflictCardId?: string;
 }
 
 export const isAllFieldsFilled = (
@@ -125,48 +126,62 @@ export const checkWorkScheduleHours = (
   };
 };
 
-const checkTimeSlots = (
+export const checkTimeSlots = (
   newStartTime: Time,
   newEndTime: Time,
-  daySlotsData: IWorklogItem
-  ) => {
-    // daySlotsData.some()
+  daySlotsData: IWorklogItem[],
+  ): ICheckersReturnData => {
+
     const MIN_MINUTES_DELAY = 5;
-    const {fromTime, toTime} = daySlotsData;
-    const [startTimeHours, startTimeMinutes] = fromTime.split(":").map(Number);
-    const [endTimeHours, endTimeMinutes] = toTime.split(":").map(Number);
     const [newStartTimeHours, newStartTimeMinutes] = [newStartTime.hours, newStartTime.minutes].map(Number);
     const [newEndTimeHours, newEndTimeMinutes] = [newEndTime.hours, newEndTime.minutes].map(Number);
 
-    if (newStartTimeHours > startTimeHours) {
+    function isTimeCardConflict (item: IWorklogItem) {
+      let isValid: boolean;
+      const {fromTime, toTime} = item;
+      const [startTimeHours, startTimeMinutes] = fromTime.split(":").map(Number);
+      const [endTimeHours, endTimeMinutes] = toTime.split(":").map(Number);
 
-      return newStartTimeHours > endTimeHours ||
-        (newStartTimeHours === endTimeHours && newStartTimeMinutes - endTimeMinutes >= MIN_MINUTES_DELAY) ?
-        'valid1' : 'invalid1';
+      if (newStartTimeHours > startTimeHours) {
 
-    } else if (newStartTimeHours === startTimeHours) {
+        isValid = newStartTimeHours > endTimeHours ||
+          (newStartTimeHours === endTimeHours && newStartTimeMinutes - endTimeMinutes >= MIN_MINUTES_DELAY);
 
-      if (newStartTimeMinutes < startTimeMinutes) {
+      } else if (newStartTimeHours === startTimeHours) {
 
-          if (newEndTimeHours === startTimeHours) {
-            return startTimeMinutes - newEndTimeMinutes >= MIN_MINUTES_DELAY ?
-              'valid2' : 'invalid2';
-          } else return 'invalid3';
+        if (newStartTimeMinutes < startTimeMinutes) {
+
+            if (newEndTimeHours === startTimeHours) {
+              isValid = startTimeMinutes - newEndTimeMinutes >= MIN_MINUTES_DELAY;
+            } else isValid = false;
+
+        } else {
+
+            if (newStartTimeHours === endTimeHours) {
+              isValid = newStartTimeMinutes - endTimeMinutes >= MIN_MINUTES_DELAY;
+            } else isValid = false;
+
+        };
 
       } else {
 
-          if (newStartTimeHours === endTimeHours) {
-             return newStartTimeMinutes - endTimeMinutes >= MIN_MINUTES_DELAY ?
-                  "valid6" : "invalid6";
-          } else return "invalid 4"
+        isValid = newEndTimeHours < startTimeHours ||
+          (newEndTimeHours === startTimeHours && startTimeMinutes - newEndTimeMinutes >= MIN_MINUTES_DELAY);
 
-      };
+      }
 
-    } else {
-
-      return newEndTimeHours < startTimeHours ||
-        (newEndTimeHours === startTimeHours && startTimeMinutes - newEndTimeMinutes >= MIN_MINUTES_DELAY) ?
-          'valid4' : 'invalid5';
-
+      return !isValid;
     }
+
+  const conflictCardIndex = daySlotsData.findIndex((item) => isTimeCardConflict(item));
+
+    return {
+      isValid: conflictCardIndex === -1,
+      source: {
+        start: true,
+        end: false,
+      },
+      errorText: "The time occupied by earlier entries",
+      conflictCardId: daySlotsData[conflictCardIndex]?.id,
+    };
 }

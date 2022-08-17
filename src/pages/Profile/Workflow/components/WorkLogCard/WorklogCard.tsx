@@ -9,7 +9,9 @@ import {
   checkStartTimeEqualToEndTime,
   checkIsTimeValueValid,
   checkWorkScheduleHours,
+  checkTimeSlots,
 } from "../Day/helpers/validation";
+import { IWorklogItem } from "../../../../../models/responce/WorklogResponce";
 import styles from "./styles.module.scss";
 
 interface IProps {
@@ -17,6 +19,10 @@ interface IProps {
   toTime: string;
   cardId: string;
   onCardRemove: (id: string) => void;
+  dayAppointments: IWorklogItem[];
+  setErrorCard: (id: string) => void;
+  resetError: () => void;
+  isError: boolean;
 }
 
 const WorklogCard: React.FC<IProps> = ({
@@ -24,6 +30,10 @@ const WorklogCard: React.FC<IProps> = ({
   toTime,
   cardId,
   onCardRemove,
+  dayAppointments,
+  setErrorCard,
+  isError,
+  resetError,
 }) => {
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [startTime, setStartTime] = useState<{
@@ -75,6 +85,7 @@ const WorklogCard: React.FC<IProps> = ({
 
   const onStartTimeInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    resetErrors();
     if (value.length > 2) return;
     setStartTime((prevState) => ({
       ...prevState,
@@ -84,11 +95,18 @@ const WorklogCard: React.FC<IProps> = ({
 
   const onEndTimeInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    resetErrors();
     if (value.length > 2) return;
     setEndTime((prevState) => ({
       ...prevState,
       [name]: value,
     }));
+  };
+
+  const resetErrors = () => {
+    setErrorMessage("");
+    setErrorSource(errorSourceInit);
+    resetError();
   };
 
   const validateTime = (startTime: Time, endTime: Time) => {
@@ -98,22 +116,31 @@ const WorklogCard: React.FC<IProps> = ({
       checkStartTimeEqualToEndTime(startTime, endTime),
       checkStartTimeMoreThanEndTime(startTime, endTime),
       checkWorkScheduleHours(startTime, endTime),
+      checkTimeSlots(startTime, endTime, dayAppointments),
     ];
 
     const errorIndex = checkersData.findIndex((item) => !item.isValid);
 
     if (errorIndex === -1) {
-      setErrorMessage("");
-      setErrorSource(errorSourceInit);
+      resetErrors();
       return;
     }
 
     setErrorMessage(checkersData[errorIndex].errorText);
     setErrorSource(checkersData[errorIndex].source);
+
+    if (checkersData[errorIndex].conflictCardId) {
+      setErrorCard(checkersData[errorIndex].conflictCardId || "");
+    }
   };
 
   return (
-    <div className={styles.worklog_card}>
+    <div
+      className={styles.worklog_card}
+      style={{
+        borderBottom: isError ? "1px solid #f34f53" : "1px solid #c9c9c9",
+      }}
+    >
       <span
         style={{ fontSize: "12px", color: "#95A2A7", marginBottom: "10px" }}
       >
