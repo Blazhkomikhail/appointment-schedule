@@ -23,6 +23,7 @@ interface IProps {
   setErrorCard: (id: string) => void;
   resetError: () => void;
   isError: boolean;
+  createNewCard: (cardId: string, fromTime: string, toTime: string) => void;
 }
 
 const WorklogCard: React.FC<IProps> = ({
@@ -34,6 +35,7 @@ const WorklogCard: React.FC<IProps> = ({
   setErrorCard,
   isError,
   resetError,
+  createNewCard,
 }) => {
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [startTime, setStartTime] = useState<{
@@ -83,23 +85,17 @@ const WorklogCard: React.FC<IProps> = ({
     });
   }, [fromTime, toTime]);
 
-  const onStartTimeInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onTimeInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    resetErrors();
-    if (value.length > 2) return;
-    setStartTime((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
+    const [fieldName, type] = name.split("-");
 
-  const onEndTimeInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
     resetErrors();
+    setIsEditMode(true);
+
     if (value.length > 2) return;
-    setEndTime((prevState) => ({
+    (type === "start" ? setStartTime : setEndTime)((prevState) => ({
       ...prevState,
-      [name]: value,
+      [fieldName]: value,
     }));
   };
 
@@ -121,8 +117,24 @@ const WorklogCard: React.FC<IProps> = ({
 
     const errorIndex = checkersData.findIndex((item) => !item.isValid);
 
-    if (errorIndex === -1) {
+    if (
+      errorIndex === -1 ||
+      checkersData[errorIndex].conflictCardId === cardId
+    ) {
       resetErrors();
+
+      const isNewCardCreated = dayAppointments.find(
+        (data) => data.id === cardId
+      )?.createdManualy;
+
+      if (isNewCardCreated) {
+        const start = [startTime.hours, startTime.minutes].join(":");
+        const end = [endTime.hours, endTime.minutes].join(":");
+
+        createNewCard(cardId, start, end);
+        return;
+      }
+
       return;
     }
 
@@ -171,20 +183,20 @@ const WorklogCard: React.FC<IProps> = ({
             >
               <input
                 type="number"
-                name="hours"
+                name="hours-start"
                 data-time-type="start"
                 value={startTime.hours}
-                onChange={(e) => onStartTimeInputChange(e)}
+                onChange={(e) => onTimeInputChange(e)}
                 className={styles.time_input}
                 placeholder="06"
               />
               :
               <input
                 type="number"
-                name="minutes"
+                name="minutes-start"
                 data-time-type="start"
                 value={startTime.minutes}
-                onChange={(e) => onStartTimeInputChange(e)}
+                onChange={(e) => onTimeInputChange(e)}
                 className={styles.time_input}
                 placeholder="00"
               />
@@ -205,19 +217,19 @@ const WorklogCard: React.FC<IProps> = ({
             >
               <input
                 type="number"
-                name="hours"
+                name="hours-end"
                 value={endTime.hours}
-                onChange={(e) => onEndTimeInputChange(e)}
+                onChange={(e) => onTimeInputChange(e)}
                 className={styles.time_input}
                 placeholder="20"
               />
               :
               <input
                 type="number"
-                name="minutes"
+                name="minutes-end"
                 data-time-type="end"
                 value={endTime.minutes}
-                onChange={(e) => onEndTimeInputChange(e)}
+                onChange={(e) => onTimeInputChange(e)}
                 className={styles.time_input}
                 placeholder="00"
               />

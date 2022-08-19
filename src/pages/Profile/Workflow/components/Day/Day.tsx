@@ -5,6 +5,7 @@ import { IWorklogItem } from "../../../../../models/responce/WorklogResponce";
 import WorklogCard from "../WorkLogCard/WorklogCard";
 import { v4 as uuid } from "uuid";
 import styles from "./styles.module.scss";
+import WorklogService from "../../../../../api/WorklogService";
 
 const Day = ({
   dayName,
@@ -14,7 +15,7 @@ const Day = ({
   dayNumber: number;
 }) => {
   const [cardsData, setCardsData] = useState<IWorklogItem[]>([]);
-  const { workLogData } = useSelector(
+  const { workLogData, userData } = useSelector(
     (store: { userData: {}; workLogData: IWorklogItem[] }) => store
   );
 
@@ -39,6 +40,7 @@ const Day = ({
         id: uuid(),
         fromTime: "",
         toTime: "",
+        createdManualy: true,
       },
     ]);
   };
@@ -59,6 +61,20 @@ const Day = ({
     setCardsData((prevState) =>
       prevState.map((card) => ({ ...card, hasConflictTime: false }))
     );
+  };
+
+  const createNewCard = (cardId: string, fromTime: string, toTime: string) => {
+    const newWorklogData = {
+      id: cardId,
+      isActive: true,
+      userCrmProfileID: "some3242",
+      dayOfWeek: dayNumber,
+      fromTime,
+      toTime,
+      userCrmProfile: { ...userData },
+    };
+
+    WorklogService.createWorklog(newWorklogData);
   };
 
   return (
@@ -86,6 +102,7 @@ const Day = ({
               setErrorCard={setErrorCardStyles}
               isError={hasConflictTime}
               resetError={resetError}
+              createNewCard={createNewCard}
               // validateTime={validateTime}
               // errorText={errorMessage}
               // errorSource={errorSource}

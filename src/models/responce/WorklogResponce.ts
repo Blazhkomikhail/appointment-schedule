@@ -5,6 +5,7 @@ export interface IWorklogItem {
   "toTime": string,
   "userCrmProfile"?: string | null,
   "id": string,
-  "isActive"?: boolean
-  "hasConflictTime"?: boolean
+  "isActive"?: boolean,
+  "hasConflictTime"?: boolean,
+  "createdManualy"?: boolean,
 }
