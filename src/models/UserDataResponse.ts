@@ -1,4 +1,4 @@
-type UserData = {
+export type UserDataType = {
   absences: number;
   appIdentityUserID: string | null;
   dateOfBirth: string | null;
@@ -21,8 +21,8 @@ type UserData = {
   userCrmProfilePermissionID: string | null;
   userCrmProfileWorklogs: string | null;
   userPhoto: string | null;
-}
+};
 
-export interface UserDataResponse {
-  value: Array<UserData>,
+export interface IUserDataResponse {
+  value: Array<UserDataType>;
 }

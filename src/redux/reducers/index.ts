@@ -1,51 +1,58 @@
 import { IWorklogItem } from "../../models/WorklogResponce";
+import { UserDataType } from "../../models/UserDataResponse";
 
-const initial = {
-  userData: {} as IWorklogItem,
-  workLogData: Array<IWorklogItem>,
+interface InitialStore {
+  userData: UserDataType | object;
+  workLogData: Array<IWorklogItem>;
+}
+
+const initial: InitialStore = {
+  userData: {},
+  workLogData: [],
 };
 
-const ActionTypesEnum = {
-  setUserData: "SET_USER_DATA",
-  setWorkLogData: "SET_WORK_LOG_DATA",
-};
+enum ActionsTypes {
+  SET_USER_DATA = "SET_USER_DATA",
+  SET_WORK_LOG_DATA = "SET_WORK_LOG_DATA",
+}
 
-type PropertiesTypes<T> = T extends {[key: string] : infer U} ? U : never;
-type ActionTypes<T extends {[key: string]: (...args: any[]) => any}> = ReturnType<PropertiesTypes<T>>;
+type PropertiesTypes<T> = T extends { [key: string]: infer U } ? U : never;
+type ActionTypes<T extends { [key: string]: (...args: any[]) => any }> =
+  ReturnType<PropertiesTypes<T>>;
 type ActionsTypesProp = ActionTypes<typeof actions>;
 
 export default function reducer(state = initial, action: ActionsTypesProp) {
   switch (action.type) {
-    case ActionTypesEnum.setUserData: {
+    case ActionsTypes.SET_USER_DATA: {
       return {
         ...state,
         userData: {
           ...state.userData,
           ...action.payload,
-        }
-      }
+        },
+      };
     }
-    case ActionTypesEnum.setWorkLogData: {
+    case ActionsTypes.SET_WORK_LOG_DATA: {
       return {
         ...state,
-        workLogData: [
-          ...action.payload,
-        ]
-      }
+        workLogData: [...action.payload],
+      };
     }
-    default: 
+    default:
       return state;
   }
-};
+}
 
 export const actions = {
-  setUserDataAction: (payload: any) => ({
-    type: ActionTypesEnum.setUserData,
-    payload
-  } as const), 
+  setUserDataAction: (payload: UserDataType) =>
+    ({
+      type: ActionsTypes.SET_USER_DATA,
+      payload,
+    } as const),
 
-  setWorkLogDataAction: (payload: IWorklogItem[]) => ({
-    type: ActionTypesEnum.setWorkLogData,
-    payload
-  } as const),
-}
+  setWorkLogDataAction: (payload: IWorklogItem[]) =>
+    ({
+      type: ActionsTypes.SET_WORK_LOG_DATA,
+      payload,
+    } as const),
+};

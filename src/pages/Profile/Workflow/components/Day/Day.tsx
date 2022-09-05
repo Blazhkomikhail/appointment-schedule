@@ -15,13 +15,12 @@ const Day = ({
   dayNumber: number;
 }) => {
   const [cardsData, setCardsData] = useState<IWorklogItem[]>([]);
-  const { workLogData, userData } = useSelector(
+  const { userData, workLogData } = useSelector(
     (store: { userData: {}; workLogData: IWorklogItem[] }) => store
   );
 
   useEffect(() => {
     if (!workLogData.length) return;
-
     setCardsData(
       workLogData
         .filter((item) => item.dayOfWeek === dayNumber)
