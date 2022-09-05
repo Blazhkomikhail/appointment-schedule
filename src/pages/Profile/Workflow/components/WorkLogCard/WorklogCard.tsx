@@ -11,7 +11,7 @@ import {
   checkWorkScheduleHours,
   checkTimeSlots,
 } from "../Day/helpers/validation";
-import { IWorklogItem } from "../../../../../models/responce/WorklogResponce";
+import { IWorklogItem } from "../../../../../models/WorklogResponce";
 import styles from "./styles.module.scss";
 
 interface IProps {

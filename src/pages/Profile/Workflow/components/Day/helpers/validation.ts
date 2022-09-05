@@ -1,7 +1,7 @@
 import {Time} from "./timeType";
 import checkIfSomeTimeFieldEmpty from "../../../helpers/checkIfSomeTimeFieldEmpty";
 import workDaySchedule from "../../../../../../helpers/constants/workDaySchedule";
-import {IWorklogItem} from "../../../../../../models/responce/WorklogResponce";
+import {IWorklogItem} from "../../../../../../models/WorklogResponce";
 
 interface ICheckersReturnData {
   isValid: boolean;

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Paper, Typography } from "@mui/material";
-import { IWorklogItem } from "../../../../../models/responce/WorklogResponce";
+import { IWorklogItem } from "../../../../../models/WorklogResponce";
 import WorklogCard from "../WorkLogCard/WorklogCard";
 import { v4 as uuid } from "uuid";
 import styles from "./styles.module.scss";

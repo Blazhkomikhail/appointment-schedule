@@ -1,8 +1,9 @@
 import $api from "./index";
 import { AxiosResponse } from "axios";
+import {UserDataResponse} from "../models/UserDataResponse";
 
 export default class UserService {
-  static async genUserData(): Promise<AxiosResponse<any>> {
+  static async genUserData(): Promise<AxiosResponse<UserDataResponse>> {
     return $api.get('/UserCrmProfiles/GetAllDynamic');
   }
 

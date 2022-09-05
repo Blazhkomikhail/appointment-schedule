@@ -1,22 +1,14 @@
-import { useSelector } from "react-redux";
-import {
-  Typography,
-  Box,
-  // TextField,
-  // Checkbox,
-  // FormGroup,
-  // FormControlLabel,
-  // InputAdornment,
-} from "@mui/material";
-import { IWorklogItem } from "../../../models/responce/WorklogResponce";
-import WorklogCard from "./components/WorkLogCard/WorklogCard";
+// import { useSelector } from "react-redux";
+// import { IWorklogItem } from "../../../models/WorklogResponce";
+import { Typography, Box } from "@mui/material";
+// import WorklogCard from "./components/WorkLogCard/WorklogCard";
 import Day from "./components/Day/Day";
 import days from "./helpers/days";
 
 const Workflow = () => {
-  const { workLogData } = useSelector(
-    (store: { userData: {}; workLogData: IWorklogItem[] }) => store
-  );
+  // const { workLogData } = useSelector(
+  //   (store: { userData: {}; workLogData: IWorklogItem[] }) => store
+  // );
 
   return (
     <Box

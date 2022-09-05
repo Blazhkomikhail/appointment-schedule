@@ -2,16 +2,14 @@ import {takeEvery, put, call, fork} from "redux-saga/effects"
 import UserService from "../../api/UserService";
 import WorklogService from "../../api/WorklogService";
 
-const getUserData = () => {
-  return UserService.genUserData().then((resp) => {
-    return resp?.data.value.filter((user) => user.email === "demo3@demo.com")[0] || []; 
-  });
+async function getUserData() {
+  const response = await UserService.genUserData();
+  return response?.data.value.filter((user) => user.email === "demo3@demo.com")[0] || []; 
 }
 
-function getWorklogData() {
-  return WorklogService.getAllData().then((resp) => {
-    return resp?.data.value || [];
-  });
+async function getWorklogData() {
+  const response = await WorklogService.getAllData();
+  return response?.data.value || [];
 }
 
 function* loadUserData () {

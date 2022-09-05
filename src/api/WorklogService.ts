@@ -1,6 +1,6 @@
 import $api from "./index";
 import { AxiosResponse } from "axios";
-import {IWorklogItem} from "../models/responce/WorklogResponce";
+import {IWorklogItem} from "../models/WorklogResponce";
 
 export default class WorklogService {
   static async getAllData(): Promise<AxiosResponse<IWorklogItem[]>> {
