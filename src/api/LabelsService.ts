@@ -1,5 +1,5 @@
 import $api from "./index";
-import { LoginLabelType, LoginLabelsResponse } from "../models/responce/LabelsResponse";
+import { LoginLabelType, LoginLabelsResponse } from "../models/LabelsResponse";
 
 export default class LabelsService {
   static async getLoginPageLabels(params: string[], labelList: string[]): Promise<LoginLabelType[]> {

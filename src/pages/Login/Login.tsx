@@ -5,7 +5,7 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import { LoginPageLabel } from "../../models/responce/LabelsResponse";
+import { LoginPageLabel } from "../../models/LabelsResponse";
 import LabelsService from "../../api/LabelsService";
 import { Skeleton } from "@mui/material";
 import AuthService from "../../api/AuthService";

@@ -16,7 +16,7 @@ const Profile = () => {
   const [isMember, setIsMember] = useState(false);
  
   useEffect(() => {
-    dispatch({type: "PROFILE_PAGE_LOAD"})
+    dispatch({type: "PROFILE_PAGE_LOAD"});
   }, [dispatch]);
   
   useEffect(() => {

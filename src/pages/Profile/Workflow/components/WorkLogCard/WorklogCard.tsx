@@ -9,7 +9,9 @@ import {
   checkStartTimeEqualToEndTime,
   checkIsTimeValueValid,
   checkWorkScheduleHours,
+  checkTimeSlots,
 } from "../Day/helpers/validation";
+import { IWorklogItem } from "../../../../../models/WorklogResponce";
 import styles from "./styles.module.scss";
 
 interface IProps {
@@ -17,6 +19,11 @@ interface IProps {
   toTime: string;
   cardId: string;
   onCardRemove: (id: string) => void;
+  dayAppointments: IWorklogItem[];
+  setErrorCard: (id: string) => void;
+  resetError: () => void;
+  isError: boolean;
+  createNewCard: (cardId: string, fromTime: string, toTime: string) => void;
 }
 
 const WorklogCard: React.FC<IProps> = ({
@@ -24,6 +31,11 @@ const WorklogCard: React.FC<IProps> = ({
   toTime,
   cardId,
   onCardRemove,
+  dayAppointments,
+  setErrorCard,
+  isError,
+  resetError,
+  createNewCard,
 }) => {
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [startTime, setStartTime] = useState<{
@@ -73,22 +85,24 @@ const WorklogCard: React.FC<IProps> = ({
     });
   }, [fromTime, toTime]);
 
-  const onStartTimeInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onTimeInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    const [fieldName, type] = name.split("-");
+
+    resetErrors();
+    setIsEditMode(true);
+
     if (value.length > 2) return;
-    setStartTime((prevState) => ({
+    (type === "start" ? setStartTime : setEndTime)((prevState) => ({
       ...prevState,
-      [name]: value,
+      [fieldName]: value,
     }));
   };
 
-  const onEndTimeInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    if (value.length > 2) return;
-    setEndTime((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
+  const resetErrors = () => {
+    setErrorMessage("");
+    setErrorSource(errorSourceInit);
+    resetError();
   };
 
   const validateTime = (startTime: Time, endTime: Time) => {
@@ -98,22 +112,47 @@ const WorklogCard: React.FC<IProps> = ({
       checkStartTimeEqualToEndTime(startTime, endTime),
       checkStartTimeMoreThanEndTime(startTime, endTime),
       checkWorkScheduleHours(startTime, endTime),
+      checkTimeSlots(startTime, endTime, dayAppointments),
     ];
 
     const errorIndex = checkersData.findIndex((item) => !item.isValid);
 
-    if (errorIndex === -1) {
-      setErrorMessage("");
-      setErrorSource(errorSourceInit);
+    if (
+      errorIndex === -1 ||
+      checkersData[errorIndex].conflictCardId === cardId
+    ) {
+      resetErrors();
+
+      const isNewCardCreated = dayAppointments.find(
+        (data) => data.id === cardId
+      )?.createdManualy;
+
+      if (isNewCardCreated) {
+        const start = [startTime.hours, startTime.minutes].join(":");
+        const end = [endTime.hours, endTime.minutes].join(":");
+
+        createNewCard(cardId, start, end);
+        return;
+      }
+
       return;
     }
 
     setErrorMessage(checkersData[errorIndex].errorText);
     setErrorSource(checkersData[errorIndex].source);
+
+    if (checkersData[errorIndex].conflictCardId) {
+      setErrorCard(checkersData[errorIndex].conflictCardId || "");
+    }
   };
 
   return (
-    <div className={styles.worklog_card}>
+    <div
+      className={styles.worklog_card}
+      style={{
+        borderBottom: isError ? "1px solid #f34f53" : "1px solid #c9c9c9",
+      }}
+    >
       <span
         style={{ fontSize: "12px", color: "#95A2A7", marginBottom: "10px" }}
       >
@@ -144,20 +183,20 @@ const WorklogCard: React.FC<IProps> = ({
             >
               <input
                 type="number"
-                name="hours"
+                name="hours-start"
                 data-time-type="start"
                 value={startTime.hours}
-                onChange={(e) => onStartTimeInputChange(e)}
+                onChange={(e) => onTimeInputChange(e)}
                 className={styles.time_input}
                 placeholder="06"
               />
               :
               <input
                 type="number"
-                name="minutes"
+                name="minutes-start"
                 data-time-type="start"
                 value={startTime.minutes}
-                onChange={(e) => onStartTimeInputChange(e)}
+                onChange={(e) => onTimeInputChange(e)}
                 className={styles.time_input}
                 placeholder="00"
               />
@@ -178,19 +217,19 @@ const WorklogCard: React.FC<IProps> = ({
             >
               <input
                 type="number"
-                name="hours"
+                name="hours-end"
                 value={endTime.hours}
-                onChange={(e) => onEndTimeInputChange(e)}
+                onChange={(e) => onTimeInputChange(e)}
                 className={styles.time_input}
                 placeholder="20"
               />
               :
               <input
                 type="number"
-                name="minutes"
+                name="minutes-end"
                 data-time-type="end"
                 value={endTime.minutes}
-                onChange={(e) => onEndTimeInputChange(e)}
+                onChange={(e) => onTimeInputChange(e)}
                 className={styles.time_input}
                 placeholder="00"
               />

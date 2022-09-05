@@ -10,27 +10,26 @@ async function getUserData () {
 }
 
 async function getWorklogData() {
-  return WorklogService.getAllData().then((resp) => {
-    return resp.data.value || [];
-  });
+  const response = await WorklogService.getAllData();
+  return response?.data.value || [];
 }
 
 function* loadUserData () {
-  try {
-  const data = yield call(getUserData);
-  yield put (actions.setUserDataAction(data));
-} catch {
-  yield console.log('Error. Do something')
-}
+  try{
+    const data = yield call(getUserData);
+    yield put (actions.setUserDataAction(data));
+  } catch {
+    yield console.log('Error. Do something')
+  }
 }
 
 function* loadWorkLogData () {
-  try {
-  const data = yield call(getWorklogData);
-  yield put (actions.setWorkLogDataAction(data));
-} catch {
+  try{
+    const data = yield call(getWorklogData);
+    yield put (actions.setWorkLogDataAction(data));
+  } catch {
     yield console.log('Error. Do something')
-}
+  }
 }
 
 export function* profileWorkerSaga() {
