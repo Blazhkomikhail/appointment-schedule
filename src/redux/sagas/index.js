@@ -1,10 +1,11 @@
-import {takeEvery, put, call, fork} from "redux-saga/effects"
+import { takeEvery, put, call, fork } from "redux-saga/effects";
 import UserService from "../../api/UserService";
 import WorklogService from "../../api/WorklogService";
+import { actions } from "../reducers/index";
 
 async function getUserData() {
   const response = await UserService.genUserData();
-  return response?.data.value.filter((user) => user.email === "demo3@demo.com")[0] || []; 
+  return response.data.value.find((user) => user.email === "demo3@demo.com");
 }
 
 async function getWorklogData() {
@@ -12,27 +13,33 @@ async function getWorklogData() {
   return response?.data.value || [];
 }
 
-function* loadUserData () {
-  const data = yield call(getUserData);
-  
-  yield put ({type: "SET_USER_DATA", payload: data});
+function* loadUserData() {
+  try {
+    const data = yield call(getUserData);
+    yield put(actions.setUserDataAction(data));
+  } catch {
+    yield console.log("Error. Do something");
+  }
 }
 
-function* loadWorkLogData () {
-  const data = yield call(getWorklogData);
-
-  yield put ({type: "SET_WORK_LOG_DATA", payload: data});
+function* loadWorkLogData() {
+  try {
+    const data = yield call(getWorklogData);
+    yield put(actions.setWorkLogDataAction(data));
+  } catch {
+    yield console.log("Error. Do something");
+  }
 }
 
 export function* profileWorkerSaga() {
   yield fork(loadUserData);
   yield fork(loadWorkLogData);
-} 
+}
 
 export function* watchProfilePage() {
   yield takeEvery("PROFILE_PAGE_LOAD", profileWorkerSaga);
 }
 
-export default function* rootSaga () {
+export default function* rootSaga() {
   yield watchProfilePage();
 }
