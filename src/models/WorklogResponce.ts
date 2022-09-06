@@ -1,5 +1,5 @@
 export interface IWorklogItem {
-  userCrmProfileID?: string;
+  userCrmProfileID?: string | null;
   dayOfWeek: number;
   fromTime: string;
   toTime: string;

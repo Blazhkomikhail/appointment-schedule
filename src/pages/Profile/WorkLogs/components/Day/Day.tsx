@@ -35,6 +35,7 @@ const Day = ({
     setCardsData((prevState) => [
       ...prevState,
       {
+        userCrmProfileID: null,
         dayOfWeek: dayNumber,
         id: uuid(),
         fromTime: "",
@@ -73,6 +74,16 @@ const Day = ({
       userCrmProfile: { ...userData },
     };
 
+    setCardsData((prevState) =>
+      prevState
+        .map((slot) =>
+          slot.id === cardId ? { ...slot, fromTime, toTime } : slot
+        )
+        .sort(
+          (a, b) =>
+            Number(a.fromTime.split(":")[0]) - Number(b.fromTime.split(":")[0])
+        )
+    );
     WorklogService.createWorklog(newWorklogData);
   };
 
@@ -92,7 +103,7 @@ const Day = ({
         {cardsData.map(
           ({ id, fromTime, toTime, hasConflictTime = false }, idx) => (
             <WorklogCard
-              key={id || `${fromTime}_idx`}
+              key={id || `${fromTime}_${idx}`}
               fromTime={fromTime}
               toTime={toTime}
               cardId={id}
@@ -102,9 +113,6 @@ const Day = ({
               isError={hasConflictTime}
               resetError={resetError}
               createNewCard={createNewCard}
-              // validateTime={validateTime}
-              // errorText={errorMessage}
-              // errorSource={errorSource}
             />
           )
         )}

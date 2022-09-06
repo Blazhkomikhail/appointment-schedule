@@ -132,6 +132,7 @@ const WorklogCard: React.FC<IProps> = ({
         const end = [endTime.hours, endTime.minutes].join(":");
 
         createNewCard(cardId, start, end);
+        setIsEditMode(false);
         return;
       }
 
