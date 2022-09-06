@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {useSelector, useDispatch} from "react-redux";
 import SideMenu from "../../components/SideMenu";
 import { Typography, Box, TextField, Checkbox, FormGroup, FormControlLabel, InputAdornment } from '@mui/material';
 import { ReactComponent as SlackIcon } from '../../assets/slack-icon.svg';
 import { ReactComponent as GithubIcon } from '../../assets/github-icon.svg';
 import UserService from "../../api/UserService";
-import Workflow from "./Workflow/"
+import WorkLogs from "./WorkLogs";
 import useComponentDidUpdate from "../../hooks/useComponentDidUpdate";
 import styles from "./styles.module.scss";
 
@@ -251,7 +251,7 @@ const Profile = () => {
           </Box>
         
         </Box>
-        <Workflow />
+        <WorkLogs />
       </div>
     </div>
   );
