@@ -1,13 +1,13 @@
 import { IWorklogItem } from "../../models/WorklogResponce";
 import { UserDataType } from "../../models/UserDataResponse";
 
-interface InitialStore {
-  userData: UserDataType | object;
+export interface IStore {
+  userData: UserDataType;
   workLogData: Array<IWorklogItem>;
 }
 
-const initial: InitialStore = {
-  userData: {},
+const initial: IStore = {
+  userData: {} as UserDataType,
   workLogData: [],
 };
 

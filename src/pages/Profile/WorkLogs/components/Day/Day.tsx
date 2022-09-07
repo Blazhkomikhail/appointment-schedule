@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import { v4 as uuid } from "uuid";
 import { Paper, Typography } from "@mui/material";
 import { IWorklogItem } from "../../../../../models/WorklogResponce";
 import WorklogCard from "../WorkLogCard/WorklogCard";
-import { v4 as uuid } from "uuid";
 import styles from "./styles.module.scss";
 import WorklogService from "../../../../../api/WorklogService";
+import SnackBarSuccess from "../../../../../components/SnackBarSuccess";
+import { IStore } from "../../../../../redux/reducers/index";
 
 const Day = ({
   dayName,
@@ -15,9 +17,8 @@ const Day = ({
   dayNumber: number;
 }) => {
   const [cardsData, setCardsData] = useState<IWorklogItem[]>([]);
-  const { userData, workLogData } = useSelector(
-    (store: { userData: {}; workLogData: IWorklogItem[] }) => store
-  );
+  const { userData, workLogData } = useSelector((store: IStore) => store);
+  const [snackBarMessage, setSnackBarMessage] = useState<string>("");
 
   useEffect(() => {
     if (!workLogData.length) return;
@@ -47,6 +48,7 @@ const Day = ({
 
   const onCardRemove = (cardId: string) => {
     setCardsData((prevState) => prevState.filter((item) => item.id !== cardId));
+    setSnackBarMessage("Timeslot removed successfuly!");
   };
 
   const setErrorCardStyles = (id: string) => {
@@ -73,6 +75,8 @@ const Day = ({
       toTime,
       userCrmProfile: { ...userData },
     };
+
+    setSnackBarMessage("Timeslot added successfuly!");
 
     setCardsData((prevState) =>
       prevState
@@ -118,6 +122,13 @@ const Day = ({
         )}
       </div>
       <button className={styles.add_card_btn} onClick={onAddCardButtonClick} />
+      <SnackBarSuccess
+        open={!!snackBarMessage}
+        onClose={() => setSnackBarMessage("")}
+        message={snackBarMessage}
+        autoHideDuration={4000}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      />
     </Paper>
   );
 };

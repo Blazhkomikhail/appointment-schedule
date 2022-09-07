@@ -1,24 +1,36 @@
 import { useEffect, useState } from "react";
-import {useSelector, useDispatch} from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import SideMenu from "../../components/SideMenu";
-import { Typography, Box, TextField, Checkbox, FormGroup, FormControlLabel, InputAdornment } from '@mui/material';
-import { ReactComponent as SlackIcon } from '../../assets/slack-icon.svg';
-import { ReactComponent as GithubIcon } from '../../assets/github-icon.svg';
+import {
+  Typography,
+  Box,
+  TextField,
+  Checkbox,
+  FormGroup,
+  FormControlLabel,
+  InputAdornment,
+} from "@mui/material";
+import { ReactComponent as SlackIcon } from "../../assets/slack-icon.svg";
+import { ReactComponent as GithubIcon } from "../../assets/github-icon.svg";
 import UserService from "../../api/UserService";
 import WorkLogs from "./WorkLogs";
 import useComponentDidUpdate from "../../hooks/useComponentDidUpdate";
+import SnackBarSuccess from "../../components/SnackBarSuccess";
+import { IStore } from "../../redux/reducers/index";
 import styles from "./styles.module.scss";
+import { UserDataType } from "../../models/UserDataResponse";
 
 const Profile = () => {
-  const {userData} = useSelector(store => store);
+  const { userData } = useSelector((store: IStore) => store);
   const dispatch = useDispatch();
-  const [profileData, setProfileData] = useState({});
+  const [profileData, setProfileData] = useState({} as UserDataType);
   const [isMember, setIsMember] = useState(false);
- 
+  const [snackBarOpen, setSnackBarOpen] = useState(false);
+
   useEffect(() => {
-    dispatch({type: "PROFILE_PAGE_LOAD"});
+    dispatch({ type: "PROFILE_PAGE_LOAD" });
   }, [dispatch]);
-  
+
   useEffect(() => {
     if (Object.keys(userData).length) {
       setProfileData(userData);
@@ -30,68 +42,98 @@ const Profile = () => {
     if (!profileData.appIdentityUserID) return;
 
     UserService.patchUserData(
-      profileData.appIdentityUserID, 
-      "isCoreTeamMember", 
+      profileData.appIdentityUserID,
+      "isCoreTeamMember",
       {
         from: !isMember,
         to: isMember,
-      });
+      }
+    );
   }, [isMember]);
 
-  const onFieldChange = (e) => {
-    const {name, value} = e.target;
+  const onFieldChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
     setProfileData((prevState) => ({
       ...prevState,
-      [name]: value
-    }))
-  }
+      [name]: value,
+    }));
+  };
 
+  const onFieldBlur = (
+    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>
+  ) => {
+    const { name, value } = e.target;
+    UserService.patchUserData(profileData.appIdentityUserID || "", name, {
+      from: userData[name as keyof UserDataType],
+      to: value,
+    }).then((resp) => {
+      if (resp.status === 200) setSnackBarOpen(true);
+    });
+  };
 
-  const onFieldBlur = (e) => {
-    const {name, value} = e.target;
-    UserService.patchUserData(
-      profileData.appIdentityUserID, 
-      name, 
-      {
-        from: userData.name,
-        to: value,
-      });
-  }
-
-  const prepairDate = (date) => {
+  const prepairDate = (date: string | null) => {
     if (!date) return "";
     return date.split("T")[0];
-  }
+  };
 
   return (
     <div className={styles.container}>
-      <SideMenu profile/>
+      <SideMenu profile />
       <div className={styles.content}>
-        <Typography variant="h5" gutterBottom component="h5" sx={{fontWeight: "bold"}}> 
+        <Typography
+          variant="h5"
+          gutterBottom
+          component="h5"
+          sx={{ fontWeight: "bold" }}
+        >
           My Profile
         </Typography>
 
-        <Box component="div" sx={{
-          marginBottom: "20px",
-          padding: "16px 19px 24px 20px",
-          display: "flex",
-          justifyContent: "space-between",
-          border: "1px solid #ebeeef",
-          borderRadius: "4px",
-          width: "100%",
-        }}>
-          <Box component="div" sx={{borderRight: "1px solid #EBEEEF", marginRight: "20px", width: "100%" }}>
-            <Typography variant="subtitle1" gutterBottom component="span" sx={{fontWeight: "bold"}}>
+        <Box
+          component="div"
+          sx={{
+            marginBottom: "20px",
+            padding: "16px 19px 24px 20px",
+            display: "flex",
+            justifyContent: "space-between",
+            border: "1px solid #ebeeef",
+            borderRadius: "4px",
+            width: "100%",
+          }}
+        >
+          <Box
+            component="div"
+            sx={{
+              borderRight: "1px solid #EBEEEF",
+              marginRight: "20px",
+              width: "100%",
+            }}
+          >
+            <Typography
+              variant="subtitle1"
+              gutterBottom
+              component="span"
+              sx={{ fontWeight: "bold" }}
+            >
               General info
             </Typography>
 
-            <div style={{width: "100%", display: "flex", flexDirection: "column", flex: "1 0 auto"}}>
-              <FormGroup 
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                flex: "1 0 auto",
+              }}
+            >
+              <FormGroup
                 row
                 sx={{
                   marginBottom: "20px",
                   display: "flex",
-                  gap: "20px"
+                  gap: "20px",
                 }}
               >
                 <TextField
@@ -104,7 +146,7 @@ const Profile = () => {
                   sx={{ width: 223 }}
                   onBlur={(e) => onFieldBlur(e)}
                 />
-                  <TextField
+                <TextField
                   value={profileData.lastName || ""}
                   id="standard-basic"
                   variant="standard"
@@ -114,27 +156,27 @@ const Profile = () => {
                   sx={{ width: 223 }}
                   onBlur={(e) => onFieldBlur(e)}
                 />
-                 <TextField
-                    id="datetime-local"
-                    variant="standard"
-                    label="Date of birth"
-                    type="date"
-                    value={prepairDate(profileData.dateOfBirth)}
-                    name="dateOfBirth"
-                    onChange={(e) => onFieldChange(e)}
-                    sx={{ width: 223 }}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    onBlur={(e) => onFieldBlur(e)}
-                  />
+                <TextField
+                  id="datetime-local"
+                  variant="standard"
+                  label="Date of birth"
+                  type="date"
+                  value={prepairDate(profileData.dateOfBirth)}
+                  name="dateOfBirth"
+                  onChange={(e) => onFieldChange(e)}
+                  sx={{ width: 223 }}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  onBlur={(e) => onFieldBlur(e)}
+                />
               </FormGroup>
-              <FormGroup 
+              <FormGroup
                 row
                 sx={{
                   marginBottom: "20px",
                   display: "flex",
-                  gap: "20px"
+                  gap: "20px",
                 }}
               >
                 <TextField
@@ -168,15 +210,14 @@ const Profile = () => {
                   onBlur={(e) => onFieldBlur(e)}
                 />
               </FormGroup>
-              <FormGroup 
+              <FormGroup
                 row
                 sx={{
                   marginBottom: "20px",
                   display: "flex",
-                  gap: "20px"
+                  gap: "20px",
                 }}
               >
-                
                 <TextField
                   value={prepairDate(profileData.startDate)}
                   id="datetime-local"
@@ -202,19 +243,24 @@ const Profile = () => {
                   onBlur={(e) => onFieldBlur(e)}
                 />
 
-                <FormControlLabel control={
-                  <Checkbox 
-                    checked={isMember}
-                    onChange={() => setIsMember((prevState) => !prevState)}
-                  />
-                  } 
-                  label="Core team member" 
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={isMember}
+                      onChange={() => setIsMember((prevState) => !prevState)}
+                    />
+                  }
+                  label="Core team member"
                 />
               </FormGroup>
             </div>
           </Box>
-          <Box component="div" sx={{minWidth: "384px"}}>
-            <Typography variant="subtitle2" component="div" sx={{fontWeight: "bold", marginBottom: 2}}>
+          <Box component="div" sx={{ minWidth: "384px" }}>
+            <Typography
+              variant="subtitle2"
+              component="div"
+              sx={{ fontWeight: "bold", marginBottom: 2 }}
+            >
               My accounts
             </Typography>
 
@@ -223,12 +269,11 @@ const Profile = () => {
                 id="input-with-icon-textfield"
                 label="Slack"
                 InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SlackIcon />
-                    
-                  </InputAdornment>
-                ),
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SlackIcon />
+                    </InputAdornment>
+                  ),
                 }}
                 variant="standard"
                 placeholder="Enter you slack user name"
@@ -238,20 +283,26 @@ const Profile = () => {
                 id="input-with-icon-textfield"
                 label="Github"
                 InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <GithubIcon />
-                  </InputAdornment>
-                ),
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <GithubIcon />
+                    </InputAdornment>
+                  ),
                 }}
                 variant="standard"
                 placeholder="Enter your github user name"
               />
             </FormGroup>
           </Box>
-        
         </Box>
         <WorkLogs />
+        <SnackBarSuccess
+          open={snackBarOpen}
+          onClose={() => setSnackBarOpen(false)}
+          message="User data updated successfuly!"
+          autoHideDuration={4000}
+          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        />
       </div>
     </div>
   );
