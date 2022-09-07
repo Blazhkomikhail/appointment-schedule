@@ -2,20 +2,24 @@ import { takeEvery, put, call, fork } from "redux-saga/effects";
 import UserService from "../../api/UserService";
 import WorklogService from "../../api/WorklogService";
 import { actions } from "../reducers/index";
+import { UserDataType } from "../../models/UserDataResponse";
+import { IWorklogItem } from "../../models/WorklogResponce";
 
-async function getUserData() {
+async function getUserData(): Promise<UserDataType | null> {
   const response = await UserService.genUserData();
-  return response.data.value.find((user) => user.email === "demo3@demo.com");
+  return (
+    response.data.value.find((user) => user.email === "demo3@demo.com") || null
+  );
 }
 
-async function getWorklogData() {
+async function getWorklogData(): Promise<IWorklogItem[] | []> {
   const response = await WorklogService.getAllData();
   return response?.data.value || [];
 }
 
 function* loadUserData() {
   try {
-    const data = yield call(getUserData);
+    const data: UserDataType = yield call(getUserData);
     yield put(actions.setUserDataAction(data));
   } catch {
     yield console.log("Error. Do something");
@@ -24,7 +28,7 @@ function* loadUserData() {
 
 function* loadWorkLogData() {
   try {
-    const data = yield call(getWorklogData);
+    const data: IWorklogItem[] = yield call(getWorklogData);
     yield put(actions.setWorkLogDataAction(data));
   } catch {
     yield console.log("Error. Do something");
